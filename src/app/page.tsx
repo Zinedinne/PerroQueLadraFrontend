@@ -1,7 +1,7 @@
 import { fetchStrapi } from "./lib/strapi";
 import { formatManualDate, formatManualPrice } from "./format";
 import Link from "next/link";
-import Navbar from "./components/navbar";
+
 
 export default async function HomePage() {
   const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
@@ -29,7 +29,7 @@ export default async function HomePage() {
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-background-dark font-display text-white">
-      <Navbar />
+   
 
       <div className="flex flex-1 justify-center">
         <div className="layout-content-container flex flex-col w-full max-w-6xl flex-1 px-4 md:px-10">

@@ -1,6 +1,5 @@
 import { fetchStrapi } from "../lib/strapi";
 import { formatManualDate } from "../format";
-import Navbar from "../components/navbar";
 import Link from "next/link";
 
 export default async function EventosPage() {
@@ -11,7 +10,6 @@ export default async function EventosPage() {
 
   return (
     <div className="min-h-screen bg-background-dark text-white font-display">
-      <Navbar />
 
       <main className="max-w-6xl mx-auto px-6 py-16">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-primary/30 pb-6 gap-4">

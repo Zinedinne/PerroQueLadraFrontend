@@ -43,7 +43,6 @@ export default function EventTabs({ data }: EventTabsProps) {
         ))}
       </div>
 
-      {/* ÁREA DE CONTENIDO */}
       <div className="min-h-[300px] animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex items-center gap-3 mb-8">
           <div className="h-[2px] w-10 bg-primary" />

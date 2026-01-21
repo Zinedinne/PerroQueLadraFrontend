@@ -1,7 +1,6 @@
 import { fetchStrapi } from "./../../lib/strapi";
 import { formatManualDate } from "./../../format";
 import Link from "next/link";
-import Navbar from "./../../components/navbar";
 import MediaCarousel from "./../../components/MediaCarousel";
 import EventTabs from "./../../components/EventTabs";
 
@@ -23,7 +22,6 @@ export default async function EventoDetalle({ params }: { params: Promise<{ id: 
 
   return (
     <div className="bg-background-dark min-h-screen text-white font-display pb-20 overflow-x-hidden">
-      <Navbar />
 
       <main className="max-w-6xl mx-auto px-6">
         

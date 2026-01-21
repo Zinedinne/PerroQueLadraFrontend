@@ -3,7 +3,6 @@ import { formatManualPrice } from "../../format";
 import ProductActions from "./ProductActions";
 import ProductGallery from "./ProductGallery";
 import Link from "next/link";
-import Navbar from "./../../components/navbar"; // IMPORTANTE: Importa tu Navbar común
 
 export default async function ProductoDetalle({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,8 +24,6 @@ export default async function ProductoDetalle({ params }: { params: Promise<{ id
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-dark font-display text-white">
       
-      {/* 1. BARRA DE NAVEGACIÓN COMÚN */}
-      <Navbar />
 
       {/* 2. NAVEGACIÓN DE RUTA (BREADCRUMBS) */}
       <nav className="flex px-6 md:px-20 py-8 text-[10px] font-black uppercase tracking-[0.2em] text-white/30">

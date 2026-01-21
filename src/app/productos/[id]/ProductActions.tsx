@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { formatManualPrice } from "../../format";
+import { useRouter } from "next/navigation";
 
 export default function ProductActions({
   producto,
@@ -10,41 +10,111 @@ export default function ProductActions({
   producto: any;
   variantes: any[];
 }) {
-  // Filtramos variantes activas (Usando Activo con A mayúscula según tu log)
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [cantidad, setCantidad] = useState(1);
+  const [tallaSeleccionada, setTallaSeleccionada] = useState("");
+  const [varianteColor, setVarianteColor] = useState<any>(null);
+
   const variantesActivas = useMemo(
     () => (variantes || []).filter((v) => v?.Activo !== false),
     [variantes]
   );
 
-  const [varianteColor, setVarianteColor] = useState<any>(
-    variantesActivas[0] || null
-  );
-  const [tallaSeleccionada, setTallaSeleccionada] = useState<string>("");
-
-  // Si cambia el producto, reseteamos a la primera variante disponible
   useEffect(() => {
-    if (variantesActivas.length > 0) {
+    if (variantesActivas.length > 0 && !varianteColor) {
       setVarianteColor(variantesActivas[0]);
     }
-  }, [variantesActivas]);
+  }, [variantesActivas, varianteColor]);
 
-  // Obtenemos las tallas de la variante actual
   const tallasDisponibles = useMemo(() => {
-    if (!varianteColor || !varianteColor.tallas) return [];
-    // Ordenamos por el campo "Orden" que viene en tu JSON
-    return [...varianteColor.tallas].sort((a, b) => (a.Orden || 0) - (b.Orden || 0));
+    if (!varianteColor?.tallas) return [];
+    return [...varianteColor.tallas].sort(
+      (a: any, b: any) => (a.Orden || 0) - (b.Orden || 0)
+    );
   }, [varianteColor]);
 
-  if (variantesActivas.length === 0) {
-    return <p className="text-primary uppercase font-black italic">Sin stock disponible</p>;
-  }
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem("token");
+    const userStorage = localStorage.getItem("user");
+
+    if (!token || !userStorage) {
+      alert("Inicia sesión para continuar");
+      router.push("/login");
+      return;
+    }
+
+    const parsedUser = JSON.parse(userStorage);
+    const userId = parsedUser.id || parsedUser.user?.id || parsedUser.documentId;
+
+    if (!userId) {
+      alert("Sesión inválida");
+      return;
+    }
+
+    if (!tallaSeleccionada) {
+      alert("Selecciona talla");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
+
+      // CORRECCIÓN DE PAYLOAD:
+      // Forzamos IDs numéricos. Para relaciones Many-to-One en Strapi REST,
+      // el formato estándar es simplemente el ID.
+      const payload = {
+      data: {
+        Cantidad: Number(cantidad),
+        Detalle: `Color: ${varianteColor.Color}, Talla: ${tallaSeleccionada}`,
+        Estado: true,
+        Total: Number((producto.Precio || 0) * cantidad),
+        
+        // --- RELACIONES ---
+        cliente: Number(userId), // Este ya funciona
+        
+        // Si 'producto' solo no funciona, Strapi podría estar esperando un arreglo 
+        // o el nombre del campo está en plural en el API ID.
+        producto: Number(producto.id), 
+      }
+    };
+      console.log("📡 Payload a enviar:", payload);
+
+      const res = await fetch(`${STRAPI_URL}/api/carritos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const responseData = await res.json();
+
+      if (!res.ok) {
+        // Imprimimos el error exacto para saber si es 'producto' lo que falla
+        console.error("❌ Error Strapi detallado:", responseData.error);
+        throw new Error(responseData?.error?.message || "Error en la petición");
+      }
+
+      alert("✔️ Producto añadido y relacionado correctamente");
+      router.refresh();
+    } catch (error: any) {
+      alert(`❌ ERROR: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!varianteColor) return <p className="text-primary italic">Cargando variantes...</p>;
 
   return (
     <div className="flex flex-col gap-8">
-      
-      {/* SELECTOR DE COLOR */}
+      {/* SECCIÓN COLOR */}
       <div>
-        <p className="uppercase text-[10px] font-black tracking-[0.2em] mb-3 text-white/40">Color</p>
+        <p className="uppercase text-[10px] font-black mb-3 text-white/40 tracking-widest">Color</p>
         <div className="flex gap-2">
           {variantesActivas.map((v) => (
             <button
@@ -52,52 +122,56 @@ export default function ProductActions({
               onClick={() => {
                 setVarianteColor(v);
                 setTallaSeleccionada("");
+                setCantidad(1);
               }}
               className={`px-4 py-2 border text-[10px] font-black uppercase transition-all ${
-                v.id === varianteColor.id
-                  ? "border-primary text-primary bg-primary/10"
-                  : "border-white/10 text-white/40 hover:border-white/30"
+                v.id === varianteColor?.id 
+                  ? "border-primary text-primary bg-primary/10" 
+                  : "border-white/10 text-white/40"
               }`}
             >
-              {v.Color} {/* Usamos Color con C mayúscula */}
+              {v.Color}
             </button>
           ))}
         </div>
       </div>
 
-      {/* SELECTOR DE TALLAS */}
+      {/* SECCIÓN TALLA */}
       <div>
-        <div className="flex justify-between items-end mb-3">
-          <p className="uppercase text-[10px] font-black tracking-[0.2em] text-white/40">Talla</p>
-          <p className="text-[9px] uppercase font-bold text-white/20">Stock: {varianteColor.Stock} disp.</p>
-        </div>
+        <p className="uppercase text-[10px] font-black mb-3 text-white/40 tracking-widest">Talla</p>
         <div className="flex gap-2 flex-wrap">
           {tallasDisponibles.map((talla: any) => (
             <button
               key={talla.id}
               onClick={() => setTallaSeleccionada(talla.Nombre)}
               className={`w-12 h-12 border text-xs font-bold transition-all ${
-                tallaSeleccionada === talla.Nombre
-                  ? "bg-primary border-primary text-black"
-                  : "border-white/10 text-white hover:border-primary/50"
+                tallaSeleccionada === talla.Nombre 
+                  ? "bg-primary border-primary text-black" 
+                  : "border-white/10 text-white"
               }`}
             >
-              {talla.Nombre} {/* Usamos Nombre con N mayúscula */}
+              {talla.Nombre}
             </button>
           ))}
         </div>
       </div>
 
-      {/* BOTÓN DE ACCIÓN */}
+      {/* SECCIÓN CANTIDAD */}
+      <div>
+        <p className="uppercase text-[10px] font-black mb-3 text-white/40 tracking-widest">Cantidad</p>
+        <div className="flex items-center border border-white/10 w-fit">
+          <button onClick={() => setCantidad(Math.max(1, cantidad - 1))} className="px-4 py-2 hover:bg-white/5 text-white">-</button>
+          <span className="px-6 py-2 font-black text-primary border-x border-white/10">{cantidad}</span>
+          <button onClick={() => setCantidad(Math.min(varianteColor?.Stock ?? 1, cantidad + 1))} className="px-4 py-2 hover:bg-white/5 text-white">+</button>
+        </div>
+      </div>
+
       <button
-        disabled={!tallaSeleccionada || varianteColor.Stock <= 0}
-        className="h-14 bg-primary text-black font-black uppercase tracking-[0.2em] text-sm transition-all disabled:opacity-20 disabled:grayscale active:scale-95"
+        onClick={handleAddToCart}
+        disabled={loading || !tallaSeleccionada || (varianteColor?.Stock ?? 0) <= 0}
+        className="h-14 bg-primary text-black font-black uppercase tracking-widest disabled:opacity-20 active:scale-95"
       >
-        {varianteColor.Stock <= 0 
-          ? "Agotado" 
-          : tallaSeleccionada 
-            ? `Añadir al carrito Talla ${tallaSeleccionada}` 
-            : "Selecciona tu talla"}
+        {loading ? "Procesando..." : "Añadir al carrito"}
       </button>
     </div>
   );
