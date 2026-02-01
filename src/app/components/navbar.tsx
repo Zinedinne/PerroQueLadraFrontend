@@ -2,27 +2,37 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import PerroLogo from "../assets/logoperromono.png";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    // Verificamos si hay un token para saber si mostrar el carrito
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, [pathname]);
 
   return (
-    <nav className="w-full bg-background-dark border-b border-white/5 px-6 md:px-20 py-5 flex justify-between items-center sticky top-0 z-50">
+    <nav className="w-full bg-background-dark border-b border-white/5 px-6 md:px-20 py-4 flex justify-between items-center sticky top-0 z-50">
       
-      {/* LOGO */}
-      <Link href="/" className="text-xl font-black uppercase italic tracking-tighter text-white">
-        PERRO QUE <span className="text-primary">LADRA</span>
+      {/* LOGO CON CÍRCULO BLANCO DE FONDO */}
+      <Link href="/" className="flex items-center gap-4 group">
+        <div className="flex items-center justify-center w-14 h-14 bg-white rounded-full p-2 transition-transform duration-300 group-hover:scale-110 border-2 border-primary/20 group-hover:border-primary"> 
+          <img 
+            src={PerroLogo.src} 
+            alt="Perro Que Ladra" 
+            className="h-full w-full object-contain" 
+          />
+        </div>
+        <span className="text-xl font-black uppercase italic tracking-tighter text-white">
+          PERRO QUE <span className="text-primary">LADRA</span>
+        </span>
       </Link>
 
       <div className="flex items-center gap-8">
-        {/* ENLACES NORMALES */}
+        
+        {/* TIENDA COMENTADA
         <Link 
           href="/productos/catalog" 
           className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -30,9 +40,9 @@ export default function Navbar() {
           }`}
         >
           Tienda
-        </Link>
+        </Link> 
+        */}
 
-        {/* --- NUEVO BOTÓN DE EVENTOS --- */}
         <Link 
           href="/eventos" 
           className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -42,7 +52,7 @@ export default function Navbar() {
           Eventos
         </Link>
 
-        {/* --- BOTÓN DEL CARRITO --- */}
+        {/* CARRITO COMENTADO
         {isLoggedIn && (
           <Link href="/carrito" className="relative group flex items-center gap-2">
             <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -59,8 +69,9 @@ export default function Navbar() {
             </div>
           </Link>
         )}
+        */}
 
-        {/* LOGIN / PERFIL */}
+        {/* LOGIN / SALIR COMENTADO
         {!isLoggedIn ? (
           <Link href="/login" className="bg-white text-black px-4 py-2 text-[10px] font-black uppercase italic hover:bg-primary transition-all">
             Entrar
@@ -76,6 +87,7 @@ export default function Navbar() {
             Salir
           </button>
         )}
+        */}
       </div>
     </nav>
   );
