@@ -61,26 +61,21 @@ export default function ProductActions({
 
     try {
       const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
-
-      // CORRECCIÓN DE PAYLOAD:
-      // Forzamos IDs numéricos. Para relaciones Many-to-One en Strapi REST,
-      // el formato estándar es simplemente el ID.
+console.log("--- DEBUG DE VARIANTES ---");
+  console.log("Objeto varianteColor completo:", varianteColor);
+  console.log("ID que vamos a enviar:", varianteColor?.id);
       const payload = {
       data: {
         Cantidad: Number(cantidad),
         Detalle: `Color: ${varianteColor.Color}, Talla: ${tallaSeleccionada}`,
         Estado: true,
         Total: Number((producto.Precio || 0) * cantidad),
-        
-        // --- RELACIONES ---
-        cliente: Number(userId), // Este ya funciona
-        
-        // Si 'producto' solo no funciona, Strapi podría estar esperando un arreglo 
-        // o el nombre del campo está en plural en el API ID.
-        producto: Number(producto.id), 
-      }
+        cliente: Number(userId), 
+        producto: Number(producto.id),
+          variante: Number(varianteColor?.id)
+        }
     };
-      console.log("📡 Payload a enviar:", payload);
+      console.log("🚀 PAYLOAD FINAL A ENVIAR:", JSON.stringify(payload, null, 2));
 
       const res = await fetch(`${STRAPI_URL}/api/carritos`, {
         method: "POST",

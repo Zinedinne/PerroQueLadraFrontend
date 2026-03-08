@@ -68,7 +68,7 @@ export default function PerfilPage() {
         
         <header className="mb-16">
           <h1 className="text-5xl md:text-7xl font-black uppercase italic tracking-tighter mb-4 leading-none">
-            MI_<span className="text-primary">CUENTA</span>
+            <span className="text-primary">{user?.username}</span>
           </h1>
           <p className="text-white/40 font-bold uppercase tracking-widest text-xs">
             Bienvenido, {user?.username || "Miembro de la Jauría"}
@@ -170,7 +170,7 @@ export default function PerfilPage() {
                       <h4 className="font-black uppercase text-[10px] text-white/20 mb-3 tracking-[0.2em]">Método de Pago</h4>
                       <p className="text-[11px] text-primary font-black uppercase italic">{data.Metodo_Pago}</p>
                       <p className="text-[9px] text-white/20 mt-4 uppercase font-bold tracking-widest">
-                        Pago procesado vía transferencia directa
+                        {`Status: ${data.Esa || "Sin información de pago"}`}
                       </p>
                     </div>
                   </div>

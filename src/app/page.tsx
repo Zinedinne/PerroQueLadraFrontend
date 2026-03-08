@@ -83,7 +83,7 @@ export default async function HomePage() {
             </section>
 
             {/* --- SECCIÓN PRODUCTOS (COMENTADA PARA DESPLIEGUE PARCIAL) --- */}
-            {/* <section>
+            { <section>
               <div className="flex items-center justify-between mb-8 px-2">
                 <h2 className="text-white text-2xl font-black uppercase italic tracking-widest leading-none">Lo más buscado</h2>
                 <div className="h-px flex-1 bg-white/10 ml-6 hidden md:block"></div>
@@ -116,7 +116,7 @@ export default async function HomePage() {
                 })}
               </div>
             </section> 
-            */}
+            }
 
             {/* --- SECCIÓN DE EVENTOS ADICIONALES --- */}
             <section className="py-10">

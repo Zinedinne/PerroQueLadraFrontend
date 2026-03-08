@@ -5,7 +5,7 @@ interface EventTabsProps {
   data: {
     detalles?: string;
     distanciaCategorias?: string;
-    inscripcionesPrecios?: string; // Mapeado desde InscripcionesYPrecio
+    inscripcionesPrecios?: string; 
     estimulosPremios?: string;
     kitEntrega?: string;
     notasImportantes?: string;
