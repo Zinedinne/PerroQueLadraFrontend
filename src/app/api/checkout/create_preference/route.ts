@@ -11,16 +11,36 @@ export async function POST(req: Request) {
     const { items, pedidoId } = body; 
 
     const itemsFormatted = items.map((item: any) => {
-      const attr = item.attributes || item;
-      const p = attr.producto?.data?.attributes || attr.producto;
-      return {
-        id: item.id?.toString() || "id",
-        title: p?.Nombre || "Producto Jauría",
-        unit_price: Number(p?.Precio || 0),
-        quantity: Number(attr.Cantidad || 1),
-        currency_id: "MXN",
-      };
-    });
+  // 1. LOG DE DEPURACIÓN: Ver qué llega exactamente
+  console.log("Revisando item:", item);
+
+  // 2. EXTRACCIÓN ROBUSTA DEL PRECIO
+  // Buscamos en todas las posibles ubicaciones (Tienda o Boletos)
+  let rawPrice = 
+    item.unit_price || 
+    item.Precio || 
+    item.attributes?.producto?.data?.attributes?.Precio || 
+    (item.attributes?.Total / item.attributes?.Cantidad);
+
+  // 3. LIMPIEZA Y CONVERSIÓN
+  // Convertimos a número, eliminamos decimales extra y aseguramos que no sea NaN
+  const cleanPrice = parseFloat(Number(rawPrice).toFixed(2));
+
+  // 4. VALIDACIÓN CRÍTICA
+  if (isNaN(cleanPrice) || cleanPrice <= 0) {
+    console.error("❌ PRECIO INVÁLIDO DETECTADO:", rawPrice);
+    // Asignamos un precio mínimo o lanzamos error para que no truene MP
+    throw new Error(`El producto ${item.title || 'Inscripción'} no tiene un precio válido.`);
+  }
+
+  return {
+    id: item.id?.toString() || "pql-item",
+    title: item.title || item.Nombre || "Inscripción Perro Que Ladra",
+    unit_price: cleanPrice,
+    quantity: parseInt(item.quantity || item.Cantidad || 1),
+    currency_id: "MXN",
+  };
+});
 
     const baseUrl = (process.env.NEXT_PUBLIC_URL || "http://localhost:3000").trim().replace(/\/$/, "");
 

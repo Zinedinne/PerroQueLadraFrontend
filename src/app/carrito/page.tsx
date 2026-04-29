@@ -169,6 +169,7 @@ const removeItem = async (idABorrar: string | number) => {
       });
 
       setPreferenceId(dataMP.preferenceId);
+       console.log("✅ Pedido confirmado y preferencia creada:", dataMP.preferenceId);
       toast.success("Datos confirmados. Procede al pago.");
     } catch (error) {
       toast.error("Error al procesar el pedido");
@@ -301,7 +302,7 @@ const removeItem = async (idABorrar: string | number) => {
                   <div className="animate-in fade-in zoom-in duration-500 space-y-4">
                     <div className="bg-black/50 p-4 rounded-xl border border-primary/20 text-center">
                       <p className="text-primary font-black text-xs uppercase tracking-wider">✓ Datos Listos</p>
-                    </div>
+                    </div>                    
                     <Wallet initialization={{ preferenceId, redirectMode: "blank" }} />
                     <button onClick={() => setPreferenceId(null)} className="w-full text-[10px] uppercase text-white/20 hover:text-white pt-4">
                       ← Editar Envío

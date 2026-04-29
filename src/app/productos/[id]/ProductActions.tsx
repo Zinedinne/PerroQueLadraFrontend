@@ -72,7 +72,6 @@ console.log("--- DEBUG DE VARIANTES ---");
         Total: Number((producto.Precio || 0) * cantidad),
         cliente: Number(userId), 
         producto: Number(producto.id),
-          variante: Number(varianteColor?.id)
         }
     };
       console.log("🚀 PAYLOAD FINAL A ENVIAR:", JSON.stringify(payload, null, 2));

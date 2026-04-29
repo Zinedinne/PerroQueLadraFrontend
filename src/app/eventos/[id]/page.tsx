@@ -1,8 +1,7 @@
-import { fetchStrapi } from "./../../lib/strapi";
-import Link from "next/link";
+import { fetchStrapi } from "../../lib/strapi";
 import MediaCarousel from "./../../components/MediaCarousel";
 import EventTabs from "./../../components/EventTabs";
-import BoletoSelector from "./../../components/BoletoSelector";
+import FormularioInscripcion from "./../../components/FormularioInscripcion";
 
 export default async function EventoDetalle({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -11,14 +10,13 @@ export default async function EventoDetalle({ params }: { params: Promise<{ id: 
   let evento = null;
 
   try {
-    // Traemos el evento con todo su contenido relacionado
+    // IMPORTANTE: populate=* para traer Media, evento_precios y demás relaciones
     const res = await fetchStrapi(`eventos/${id}?populate=*`);
     evento = res?.data;
   } catch (error) {
     console.error("Error al obtener el evento:", error);
   }
 
-  // Si no hay evento, mostramos un error amigable en lugar de pantalla blanca
   if (!evento) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black text-white">
@@ -27,12 +25,8 @@ export default async function EventoDetalle({ params }: { params: Promise<{ id: 
     );
   }
 
-  // VALIDACIÓN CLAVE: Si evento_precios es undefined, enviamos []
-  // Esto evita el error de .map en el componente hijo
-  const inscripcionesPorKm = Array.isArray(evento.evento_precios) 
-    ? evento.evento_precios 
-    : [];
-
+  // Validaciones de datos
+  const listaPrecios = Array.isArray(evento.evento_precios) ? evento.evento_precios : [];
   const todosLosMedios = (Array.isArray(evento.Media) ? evento.Media : [evento.Media]).filter(Boolean);
 
   return (
@@ -40,10 +34,12 @@ export default async function EventoDetalle({ params }: { params: Promise<{ id: 
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,700,1,0" />
 
       <main className="max-w-6xl mx-auto px-6">
+        {/* Carrusel de Medios */}
         <section className="h-[45vh] md:h-[65vh] w-full mt-6 mb-12">
           <MediaCarousel media={todosLosMedios} strapiUrl={STRAPI_URL} />
         </section>
 
+        {/* Título del Evento */}
         <header className="flex flex-col items-center text-center mb-16">
           <h1 className="text-4xl md:text-8xl font-black uppercase italic tracking-tighter leading-none mb-10">
             {evento.Nombre}
@@ -51,6 +47,7 @@ export default async function EventoDetalle({ params }: { params: Promise<{ id: 
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 border-t border-white/10 pt-12">
+          {/* Columna Izquierda: Información Detallada */}
           <div className="lg:col-span-2">
             <EventTabs data={{
               detalles: evento.Descripcion,
@@ -62,22 +59,13 @@ export default async function EventoDetalle({ params }: { params: Promise<{ id: 
             }} />
           </div>
 
+          {/* Columna Derecha: Formulario de Pago */}
           <aside className="relative">
-            <div className="bg-zinc-900 p-8 border-2 border-white/5 sticky top-28 shadow-2xl">
-              <header className="mb-8">
-                <h2 className="text-2xl font-black uppercase italic tracking-tighter">Inscripciones</h2>
-              </header>
-
-              {/* LLAMADA AL COMPONENTE QUE YA TIENES */}
-              {/* Aquí pasamos 'precios' ya validado como un Array */}
-              <BoletoSelector evento={evento} precios={inscripcionesPorKm} />
-
-              <div className="mt-12 pt-6 border-t border-white/5 text-center">
-                <p className="text-[9px] font-black uppercase text-white/10 tracking-[0.4em] italic">
-                  PERRO QUE LADRA © 2026
-                </p>
-              </div>
-            </div>
+            <FormularioInscripcion 
+              eventoId={id} 
+              nombreEvento={evento.Nombre} 
+              opcionesPrecios={listaPrecios} 
+            />
           </aside>
         </div>
       </main>
