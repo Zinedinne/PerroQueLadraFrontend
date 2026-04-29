@@ -4,7 +4,7 @@ import Link from "next/link";
 import Navbar from "./components/navbar"; // Asegúrate de importar el Navbar
 
 export default async function HomePage() {
-  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
+  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "https://perroqueladra.com.mx/api";
 
   // 1. Llamada a la API
   const [inicioData, productosData, eventosData] = await Promise.all([
@@ -40,48 +40,53 @@ export default async function HomePage() {
           
           <main className="flex flex-col gap-12 md:gap-20 mt-8">
             
-            {/* --- SECCIÓN HERO --- */}
-            <section className="flex flex-col gap-8 md:gap-12">
-              <div className="relative flex h-[50vh] md:h-[75vh] w-full rounded-3xl overflow-hidden border border-white/5 shadow-2xl bg-zinc-900">
-                {mediaUrl ? (
-                  isVideo ? (
-                    <video src={mediaUrl} autoPlay muted loop playsInline className="h-full w-full object-cover" />
-                  ) : (
-                    <img src={mediaUrl} alt="Hero Background" className="h-full w-full object-cover" />
-                  )
-                ) : <div className="h-full w-full bg-zinc-900" />}
-              </div>
+{/* --- SECCIÓN HERO --- */}
+<section className="flex flex-col gap-8 md:gap-12">
+  {/* Contenedor del Video/Imagen con el botón adentro */}
+  <div className="relative flex h-[50vh] md:h-[75vh] w-full rounded-3xl overflow-hidden border border-white/5 shadow-2xl bg-zinc-900">
+    {mediaUrl ? (
+      isVideo ? (
+        <video src={mediaUrl} autoPlay muted loop playsInline className="h-full w-full object-cover" />
+      ) : (
+        <img src={mediaUrl} alt="Hero Background" className="h-full w-full object-cover" />
+      )
+    ) : <div className="h-full w-full bg-zinc-900" />}
 
-              <div className="flex flex-col items-center text-center gap-6">
-                <div className="space-y-4">
-                  <p className="text-primary text-[10px] md:text-xs font-black uppercase tracking-[0.6em]">
-                    {proximoEvento ? "Próxima Fecha Confirmada" : "Perro que ladra"}
-                  </p>
-                  <h1 
-                    className="text-white text-5xl md:text-8xl font-black uppercase italic tracking-tighter leading-none"
-                    style={{ WebkitTextStroke: '1px rgba(255,255,255,0.1)', paintOrder: 'stroke fill' }}
-                  >
-                    {proximoEvento ? proximoEvento.Nombre : inicio.Titulo_Hero}
-                  </h1>
-                </div>
+    {/* --- BOTÓN SOBRE EL VIDEO --- */}
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
+      <Link
+        href={proximoEvento ? `/eventos/${proximoEvento.documentId || proximoEvento.id}` : "/eventos"}
+        className="inline-block bg-primary text-black font-black py-2 px-6 rounded-full hover:bg-white hover:scale-105 transition-all uppercase tracking-widest text-[10px] md:text-xs shadow-xl"
+      >
+        Más información
+      </Link>
+    </div>
+    
+    {/* Opcional: Un degradado oscuro abajo para que el botón resalte más */}
+    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+  </div>
 
-                {proximoEvento && (
-                  <p className="text-white/60 text-sm md:text-xl font-bold uppercase tracking-widest italic">
-                    {proximoEvento.Lugar} — {formatManualDate(proximoEvento.FechaInicio)}
-                  </p>
-                )}
+  {/* Texto del Hero (Ahora sin el botón abajo) */}
+  <div className="flex flex-col items-center text-center gap-6">
+    <div className="space-y-4">
+      <p className="text-primary text-[10px] md:text-xs font-black uppercase tracking-[0.6em]">
+        {proximoEvento ? "Próxima Fecha Confirmada" : "Perro que ladra"}
+      </p>
+      <h1
+        className="text-white text-5xl md:text-8xl font-black uppercase italic tracking-tighter leading-none"
+        style={{ WebkitTextStroke: '1px rgba(255,255,255,0.1)', paintOrder: 'stroke fill' }}
+      >
+        {proximoEvento ? proximoEvento.Nombre : inicio.Titulo_Hero}
+      </h1>
+    </div>
 
-                <div className="mt-2">
-                  <Link 
-                    href={proximoEvento ? `/eventos/${proximoEvento.documentId || proximoEvento.id}` : "/eventos"} 
-                    className="inline-block bg-primary text-black font-black py-5 px-14 rounded-full hover:bg-white hover:scale-105 transition-all uppercase tracking-[0.3em] text-[10px]"
-                  >
-                    Más información
-                  </Link>
-                </div>
-              </div>
-            </section>
-
+    {proximoEvento && (
+      <p className="text-white/60 text-sm md:text-xl font-bold uppercase tracking-widest italic">
+        {proximoEvento.Lugar} — {formatManualDate(proximoEvento.FechaInicio)}
+      </p>
+    )}
+  </div>
+</section>
             {/* --- SECCIÓN PRODUCTOS (COMENTADA PARA DESPLIEGUE PARCIAL) --- */}
             {/* <section>
               <div className="flex items-center justify-between mb-8 px-2">

@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 import { Payment } from '@mercadopago/sdk-react';
 
 export default function MPBrick({ amount, onSubmit }: any) {
@@ -34,3 +34,4 @@ export default function MPBrick({ amount, onSubmit }: any) {
     </div>
   );
 }
+*/

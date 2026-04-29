@@ -68,9 +68,9 @@ export default async function EventoDetalle({ params }: { params: Promise<{ id: 
           <aside className="relative">
             <div className="bg-zinc-900 p-8 border-2 border-white/5 sticky top-28 shadow-2xl">
               <div className="mb-8">
-                <p className="text-white/20 text-[10px] uppercase font-black mb-1 tracking-widest italic">Precio</p>
+                <p className="text-white/20 text-[10px] uppercase font-black mb-1 tracking-widest italic"></p>
                 <p className="text-5xl font-black uppercase italic text-primary leading-none">
-                  {evento.Precio || "Gratis"}
+                  {evento.Precio}
                 </p>
               </div>
               

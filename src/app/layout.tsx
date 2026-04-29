@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "PERRO QUE LADRA | STORE",
   description: "Streetwear & Events",
+  icons: {
+    icon: "/icon.png", // Next.js buscará esto en la carpeta pública o raíz de app
+  },
 };
 
 export default function RootLayout({
