@@ -1,26 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Forzamos un tema oscuro por defecto para tu diseño */
+  --background: #0a0a0a;
+  --foreground: #ffffff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* Aquí definimos tus colores personalizados para que Tailwind los compile */
+  --color-background-dark: #0a0a0a;
+  --color-primary: #25D366;
+  
+  /* Puedes agregar aquí la fuente de tus íconos o títulos si la necesitas */
+  --font-display: sans-serif; 
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
