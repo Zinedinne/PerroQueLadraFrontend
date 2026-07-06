@@ -1,27 +1,47 @@
-"use client";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+'use client';
 
-export default function GraciasPage() {
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+
+// 1. Creamos un componente interno que consuma los parámetros de la URL de forma segura
+function ContenidoGracias() {
   const searchParams = useSearchParams();
-  const paymentId = searchParams.get("payment_id");
+  const paymentId = searchParams.get('payment_id');
+  const status = searchParams.get('status');
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center">
-      <h1 className="text-7xl md:text-9xl font-black italic text-primary uppercase animate-bounce">
-        ¡LISTO!
+    <div className="text-center">
+      <h1 className="text-4xl font-black uppercase italic mb-4 text-green-500">
+        ¡Gracias por tu compra!
       </h1>
-      <h2 className="text-2xl md:text-4xl font-black uppercase mt-4">Bienvenido a la Jauría</h2>
-      <p className="text-white/40 mt-6 font-mono uppercase tracking-widest">
-        Tu pago ha sido aprobado con éxito.
-      </p>
       {paymentId && (
-        <span className="text-[10px] text-white/20 mt-2 font-mono">ID: {paymentId}</span>
+        <p className="text-white/60 text-sm">
+          ID de operación: <span className="text-white font-mono">{paymentId}</span>
+        </p>
       )}
-      
-      <Link href="/perfil" className="mt-12 bg-white text-black px-10 py-4 font-black uppercase italic hover:bg-primary transition-all">
-        Ver mis pedidos
-      </Link>
-    </main>
+      {status === 'approved' ? (
+        <p className="mt-4 text-emerald-400 font-bold uppercase italic">Tu pago fue aprobado con éxito.</p>
+      ) : (
+        <p className="mt-4 text-yellow-400 font-bold uppercase italic">Estamos procesando tu pago.</p>
+      )}
+      {/* Aquí va el resto del diseño de tu página de gracias */}
+    </div>
   );
 }
+
+// 2. La página principal exporta el componente envuelto en Suspense
+export default function GraciasPage() {
+  return (
+    <div className="bg-black min-h-screen text-white flex items-center justify-center p-6">
+      {/* El fallback es lo que se muestra una milésima de segundo mientras Next detecta la URL */}
+      <Suspense fallback={
+        <div className="text-white/50 font-black uppercase italic animate-pulse">
+          Cargando detalles de tu orden...
+        </div>
+      }>
+        <ContenidoGracias />
+      </Suspense>
+    </div>
+  );
+}
+
