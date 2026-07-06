@@ -1,7 +1,7 @@
 import { fetchStrapi } from "../../lib/strapi";
 import MediaCarousel from "./../../components/MediaCarousel";
 import EventTabs from "./../../components/EventTabs";
-import FormularioInscripcion from "./../../components/FormularioInscripcion"; 
+import FormularioInscripcion from "./../../components/FormularioInscripcion";
 
 export default async function EventoDetalle({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -59,44 +59,13 @@ export default async function EventoDetalle({ params }: { params: Promise<{ id: 
             }} />
           </div>
 
-          {/* Columna Derecha: Formulario de Pago */}
+          {/* Columna Derecha: Formulario de Pago (Cambios Locales Conservados) */}
           <aside className="relative">
-            <div className="bg-zinc-900 p-8 border-2 border-white/5 sticky top-28 shadow-2xl">
-              <div className="mb-8">
-                <p className="text-white/20 text-[10px] uppercase font-black mb-1 tracking-widest italic">Precio</p>
-                <p className="text-5xl font-black uppercase italic text-primary leading-none">
-                  {evento.Precio || "Gratis"}
-                </p>
-              </div>
-              
-              {evento.UrlInscripcion ? (
-                <a 
-                  href={evento.UrlInscripcion} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group relative block w-full border-2 border-[#25D366] transition-all duration-300 hover:scale-[1.02]"
-                >
-                  <div className="flex items-center justify-center gap-3 py-5 px-4 bg-transparent group-hover:bg-[#25D366] transition-colors duration-300">
-                    <span className="material-symbols-outlined text-[#25D366] group-hover:text-black transition-colors duration-300 text-[24px]">
-                      {evento.UrlInscripcion.includes('wa.me') || evento.UrlInscripcion.includes('whatsapp') ? 'chat_bubble' : 'app_registration'}
-                    </span>
-                    <span className="font-black uppercase italic text-[11px] tracking-[0.2em] text-[#25D366] group-hover:text-black transition-colors duration-300">
-                      Inscribirme Ahora
-                    </span>
-                  </div>
-                </a>
-              ) : (
-                <div className="w-full border-2 border-white/10 py-5 px-4 text-center bg-white/5">
-                   <span className="font-black uppercase italic text-[11px] tracking-[0.3em] text-white/30">
-                      Próximamente
-                   </span>
-                </div>
-              )}
-
-              <div className="mt-12 pt-6 border-t border-white/5 text-center">
-                <p className="text-[9px] font-black uppercase text-white/10 tracking-[0.4em] italic">PERRO QUE LADRA © 2026</p>
-              </div>
-            </div>
+            <FormularioInscripcion 
+              eventoId={id} 
+              nombreEvento={evento.Nombre} 
+              opcionesPrecios={listaPrecios} 
+            />
           </aside>
         </div>
       </main>
