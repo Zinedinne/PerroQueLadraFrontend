@@ -73,6 +73,7 @@ const removeItem = async (idABorrar: string | number) => {
     });
 
     if (res.ok) {
+      setPreferenceId(null);
       // 2. ACTUALIZACIÓN REAL DE LA UI
       // Usamos el callback (prev) para asegurarnos de tener la lista más reciente
       setItems((prevItems) => 
@@ -122,57 +123,22 @@ const removeItem = async (idABorrar: string | number) => {
 
     setIsProcessing(true);
     const token = localStorage.getItem("token");
-    const userStorage = JSON.parse(localStorage.getItem("user") || "{}");
-    const userId = userStorage.id || userStorage.user?.id;
-    const userEmail = userStorage.email || userStorage.user?.email || "cliente@test.com";
-
     try {
-      const listaProductosJSON = items.map((item: any) => {
-        const data = item.attributes || item;
-        const p = data.producto?.data?.attributes || data.producto;
-        return {
-          Producto_Nombre: p?.Nombre || data.Detalle || "Inscripción",
-          cantidad: data.Cantidad || 0,
-          Precio_Unitario: p?.Precio || (data.Total / data.Cantidad) || 0,
-          Subtotal: (p?.Precio || (data.Total / data.Cantidad) || 0) * (data.Cantidad || 0),
-          Variante: data.Detalle || "N/A" 
-        };
-      });
-
-      const resPedido = await fetch(`${STRAPI_URL}/api/pedidos`, {
+      if (!token) throw new Error("Inicia sesión para pagar");
+      const resMP = await fetch(`${STRAPI_URL}/api/payments/create-preference`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ data: { 
-          Estado: "Pendiente", 
-          users_permissions_user: userId, 
-          total, 
-          Metodo_Pago: "Mercado Pago",
-          ...shippingData,
-          Lista_Productos: listaProductosJSON 
-        }})
-      });
-
-      const pedidoCreado = await resPedido.json();
-      const pedidoId = pedidoCreado.data.documentId;
-
-      const resMP = await fetch("/api/checkout/create_preference", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items, pedidoId, userEmail }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ shippingData }),
       });
       const dataMP = await resMP.json();
-
-      await fetch(`${STRAPI_URL}/api/pedidos/${pedidoId}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ data: { MP_Payment_ID: String(dataMP.preferenceId) } })
-      });
-
+      if (!resMP.ok || !dataMP.preferenceId) {
+        throw new Error(dataMP.error?.message || "No se pudo iniciar el pago");
+      }
       setPreferenceId(dataMP.preferenceId);
        console.log("✅ Pedido confirmado y preferencia creada:", dataMP.preferenceId);
       toast.success("Datos confirmados. Procede al pago.");
     } catch (error) {
-      toast.error("Error al procesar el pedido");
+      toast.error(error instanceof Error ? error.message : "Error al procesar el pedido");
     } finally {
       setIsProcessing(false);
     }

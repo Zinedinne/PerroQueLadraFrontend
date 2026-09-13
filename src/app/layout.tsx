@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-<<<<<<< HEAD
-import Navbar from "./components/navbar"; 
-import { Toaster } from "sonner"; 
-import Script from "next/script";
-=======
 import Navbar from "./components/navbar";
 import { Toaster } from "sonner"; 
->>>>>>> 0616f1925c9f2bcaa55420195b9d60f1ecd92e22
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,30 +30,9 @@ export default function RootLayout({
   return (
     // suppressHydrationWarning en html ayuda con extensiones que cambian el tema o atributos
     <html lang="es" suppressHydrationWarning>
-<<<<<<< HEAD
-      <body 
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background-dark text-white`}
-        // suppressHydrationWarning en body ignora atributos inyectados como cz-shortcut-listen
-        suppressHydrationWarning={true}
-      >
-=======
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background-dark text-white relative`}>
->>>>>>> 0616f1925c9f2bcaa55420195b9d60f1ecd92e22
         <Navbar />
         
-<<<<<<< HEAD
-        {/* Script de Mercado Pago cargado de forma prioritaria */}
-        <Script 
-          src="https://sdk.mercadopago.com/js/v2" 
-          strategy="beforeInteractive"
-        />
-
-        {/* Toaster estilizado para la estética de la marca */}
-        <Toaster 
-          richColors 
-          position="top-center" 
-          theme="dark" 
-=======
         {/* Contenido principal de las páginas */}
         {children}
 
@@ -78,7 +51,6 @@ export default function RootLayout({
           richColors
           position="top-center"
           theme="dark"
->>>>>>> 0616f1925c9f2bcaa55420195b9d60f1ecd92e22
           toastOptions={{
             style: {
               background: '#0a0a0a',

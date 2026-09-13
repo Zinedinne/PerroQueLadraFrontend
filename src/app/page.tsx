@@ -57,20 +57,6 @@ export default async function HomePage() {
                   )
                 ) : <div className="h-full w-full bg-zinc-900" />}
 
-<<<<<<< HEAD
-    {proximoEvento && (
-      <p className="text-white/60 text-sm md:text-xl font-bold uppercase tracking-widest italic">
-        {proximoEvento.Lugar} — {formatManualDate(proximoEvento.FechaInicio)}
-      </p>
-    )}
-  </div>
-</section>
-            {/* --- SECCIÓN PRODUCTOS (COMENTADA PARA DESPLIEGUE PARCIAL) --- */}
-            { <section>
-              <div className="flex items-center justify-between mb-8 px-2">
-                <h2 className="text-white text-2xl font-black uppercase italic tracking-widest leading-none">Lo más buscado</h2>
-                <div className="h-px flex-1 bg-white/10 ml-6 hidden md:block"></div>
-=======
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
                   <Link
                     href={proximoEvento ? `/eventos/${proximoEvento.documentId || proximoEvento.id}` : "/eventos"}
@@ -81,7 +67,6 @@ export default async function HomePage() {
                 </div>
 
                 <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
->>>>>>> 0616f1925c9f2bcaa55420195b9d60f1ecd92e22
               </div>
 
               <div className="flex flex-col items-center text-center gap-4">
@@ -101,10 +86,6 @@ export default async function HomePage() {
                   </p>
                 )}
               </div>
-<<<<<<< HEAD
-            </section> 
-            }
-=======
             </section>
 
             {/* --- 2. SECCIÓN TIENDA (COMENTADA) --- */}
@@ -166,7 +147,6 @@ export default async function HomePage() {
               </div>
             </section>
             */}
->>>>>>> 0616f1925c9f2bcaa55420195b9d60f1ecd92e22
 
             {/* --- 3. MENSAJE HERO (ARRIBA DE EVENTOS) --- */}
             {mensajeHero && (

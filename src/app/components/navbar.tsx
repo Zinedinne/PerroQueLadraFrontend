@@ -32,11 +32,7 @@ export default function Navbar() {
 
       <div className="flex items-center gap-8">
         
-<<<<<<< HEAD
-        /* TIENDA COMENTADA */
-=======
-        
->>>>>>> 0616f1925c9f2bcaa55420195b9d60f1ecd92e22
+
         <Link 
           href="/productos/catalog" 
           className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -45,12 +41,8 @@ export default function Navbar() {
         >
           Tienda
         </Link> 
-<<<<<<< HEAD
         
 
-=======
-       
->>>>>>> 0616f1925c9f2bcaa55420195b9d60f1ecd92e22
         <Link 
           href="/eventos" 
           className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -60,10 +52,6 @@ export default function Navbar() {
           Eventos
         </Link>
 
-<<<<<<< HEAD
-=======
-       
->>>>>>> 0616f1925c9f2bcaa55420195b9d60f1ecd92e22
         {isLoggedIn && (
           <Link href="/carrito" className="relative group flex items-center gap-2">
             <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -80,7 +68,6 @@ export default function Navbar() {
             </div>
           </Link>
         )}
-<<<<<<< HEAD
         {isLoggedIn && (
           <Link 
             href="/perfil"className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -93,9 +80,6 @@ export default function Navbar() {
               </span>
             </Link>
         )}    
-=======
-        
->>>>>>> 0616f1925c9f2bcaa55420195b9d60f1ecd92e22
 
         {!isLoggedIn ? (
           <Link href="/login" className="bg-white text-black px-4 py-2 text-[10px] font-black uppercase italic hover:bg-primary transition-all">

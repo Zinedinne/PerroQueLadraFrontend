@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function FormularioInscripcion({ eventoId, nombreEvento, opcionesPrecios }: any) {
   const [mensaje, setMensaje] = useState("");
   const [precioSeleccionado, setPrecioSeleccionado] = useState(0);
-  const [nombrePrecio, setNombrePrecio] = useState("");
+  const [precioId, setPrecioId] = useState("");
   const [edadCalculada, setEdadCalculada] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
@@ -37,10 +37,10 @@ export default function FormularioInscripcion({ eventoId, nombreEvento, opciones
     const opcion = opcionesPrecios.find((p: any) => p.id.toString() === e.target.value);
     if (opcion) {
       setPrecioSeleccionado(Number(opcion.Precio));
-      setNombrePrecio(opcion.KM);
+      setPrecioId(opcion.documentId);
     } else {
       setPrecioSeleccionado(0);
-      setNombrePrecio("");
+      setPrecioId("");
     }
   };
 
@@ -54,57 +54,15 @@ export default function FormularioInscripcion({ eventoId, nombreEvento, opciones
   setMensaje("GENERANDO REFERENCIAS DE PAGO...");
 
   try {
-    // --- PASO 1: CREAR LA PREFERENCIA EN MERCADO PAGO PRIMERO ---
-    // Esto lo hacemos para obtener el ID de la transacción de MP antes de crear el boleto
-    const resMP = await fetch("/api/checkout/create_preference", {
+    const resMP = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/payments/create-preference`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        items: [{
-          title: `Inscripción: ${nombreEvento} - ${nombrePrecio}`,
-          unit_price: precioSeleccionado,
-          quantity: 1
-        }],
-        userEmail: formData.correo
-      }),
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${tokenUsuario}` },
+      body: JSON.stringify({ registration: { eventoId, precioId, participant: formData } }),
     });
-
     const dataMP = await resMP.json();
-    
-    // Este es el ID de la intención de pago (init_point y preference_id)
-    if (!dataMP.id || !dataMP.init_point) {
-      throw new Error("No se pudo conectar con Mercado Pago");
+    if (!resMP.ok || !dataMP.init_point) {
+      throw new Error(dataMP.error?.message || "No se pudo iniciar el pago");
     }
-
-    // --- PASO 2: REGISTRAR EL BOLETO EN STRAPI YA CON EL ID DE MP ---
-    const resStrapi = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/boletos`, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${tokenUsuario}` 
-      },
-      body: JSON.stringify({
-        data: {
-          Nombre_Participante: formData.Nombre_Participante,
-          correo: formData.correo,
-          Numero_Telefono: formData.Numero_Telefono,
-          FechaNacimiento: formData.FechaNacimiento,
-          Domicilio: formData.Domicilio,
-          Rama: formData.Rama,
-          Talla: formData.Talla,
-          evento: eventoId,
-          MP_Status_Detail: "Pendiente",
-          // Guardamos el ID de la preferencia aquí mismo
-          MP_Payment_ID: dataMP.id 
-        }
-      })
-    });
-
-    const dataBoleto = await resStrapi.json();
-    if (!resStrapi.ok) throw new Error(dataBoleto.error?.message || "Error al registrar boleto");
-
-    // --- PASO 3: REDIRIGIR AL USUARIO AL PAGO ---
-    // El boleto ya existe en tu DB con el ID de la referencia vinculado
     window.location.href = dataMP.init_point;
 
   } catch (error: any) {

@@ -47,7 +47,9 @@ export default function BoletoSelector({ evento, precios = [] }: { evento: any; 
           Detalle: `BOLETO: ${evento.Nombre} | KM: ${inscripcion?.KM || 'N/A'}`,
           Estado: true,
           Total: Number((inscripcion?.Precio || 0) * cantidad),
-          cliente: Number(userId)
+          cliente: Number(userId),
+          evento: evento.documentId,
+          evento_precio: selectedId
         }
       };
 
