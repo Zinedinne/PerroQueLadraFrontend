@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/navbar"; 
-import { Toaster } from "sonner"; // <--- 1. Importamos Toaster
+import Navbar from "./components/navbar";
+import { Toaster } from "sonner"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "PERRO QUE LADRA | STORE",
   description: "Streetwear & Events",
   icons: {
-    icon: "/icon.png", // Next.js buscará esto en la carpeta pública o raíz de app
+    icon: "/icon.png", 
   },
 };
 
@@ -29,19 +29,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background-dark text-white`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background-dark text-white relative`}>
         <Navbar />
-        {children}
         
-        {/* 2. Añadimos el componente Toaster aquí abajo */}
-        <Toaster 
-          richColors 
-          position="top-center" 
-          theme="dark" 
+        {/* Contenido principal de las páginas */}
+        {children}
+
+        {/* 3. NUEVO: Botón Flotante de Odoo */}
+        <a
+          href="https://perro-que-ladra.odoo.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 right-6 bg-primary text-black px-6 py-3 rounded-full font-black uppercase italic shadow-[0_0_20px_rgba(37,211,102,0.3)] hover:scale-105 transition-all duration-300 z-50 border-2 border-primary hover:bg-background-dark hover:text-primary tracking-widest text-xs"
+        >
+          Visita nuestra tienda
+        </a>
+
+        {/* 2. Componente Toaster */}
+        <Toaster
+          richColors
+          position="top-center"
+          theme="dark"
           toastOptions={{
-            style: { 
-              background: '#0a0a0a', 
-              color: '#fff', 
+            style: {
+              background: '#0a0a0a',
+              color: '#fff',
               border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: '12px',
               textTransform: 'uppercase',

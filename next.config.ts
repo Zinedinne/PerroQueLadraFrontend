@@ -17,16 +17,6 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
-        source: '/login',
-        destination: '/eventos',
-        permanent: false,
-      },
-      {
-        source: '/register',
-        destination: '/eventos',
-        permanent: false,
-      },
-      {
         source: '/perfil',
         destination: '/eventos',
         permanent: false,

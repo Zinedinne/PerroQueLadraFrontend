@@ -32,7 +32,7 @@ export default function Navbar() {
 
       <div className="flex items-center gap-8">
         
-        {/* TIENDA COMENTADA
+        
         <Link 
           href="/productos/catalog" 
           className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -41,8 +41,7 @@ export default function Navbar() {
         >
           Tienda
         </Link> 
-        */}
-
+       
         <Link 
           href="/eventos" 
           className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -52,7 +51,7 @@ export default function Navbar() {
           Eventos
         </Link>
 
-        {/* CARRITO COMENTADO
+       
         {isLoggedIn && (
           <Link href="/carrito" className="relative group flex items-center gap-2">
             <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -69,9 +68,8 @@ export default function Navbar() {
             </div>
           </Link>
         )}
-        */}
+        
 
-        {/* LOGIN / SALIR COMENTADO
         {!isLoggedIn ? (
           <Link href="/login" className="bg-white text-black px-4 py-2 text-[10px] font-black uppercase italic hover:bg-primary transition-all">
             Entrar
@@ -87,7 +85,7 @@ export default function Navbar() {
             Salir
           </button>
         )}
-        */}
+        
       </div>
     </nav>
   );
