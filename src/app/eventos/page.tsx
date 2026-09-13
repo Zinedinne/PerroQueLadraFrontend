@@ -1,15 +1,23 @@
 import { fetchStrapi } from "../lib/strapi";
 import { formatManualDate } from "../format";
 import Link from "next/link";
+import Navbar from "../components/navbar"; // Asegúrate de incluir el Navbar si lo necesitas aquí
+
+// ESTA LÍNEA EVITA LA CACHÉ PARA QUE SIEMPRE VEAS LOS CAMBIOS EN VIVO
+export const dynamic = 'force-dynamic';
 
 export default async function EventosPage() {
   const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://127.0.0.1:1337";
   
-  const response = await fetchStrapi("eventos?populate=*&sort=FechaInicio:asc");
+  // CAMBIO AQUÍ: 'desc' para que ordene del más nuevo al más viejo
+  const response = await fetchStrapi("eventos?populate=*&sort=FechaInicio:desc");
   const eventos = response?.data || [];
 
   return (
     <div className="min-h-screen bg-background-dark text-white font-display">
+      
+      {/* Puedes descomentar esto si quieres que aparezca el menú arriba */}
+      {/* <Navbar /> */}
 
       <main className="max-w-6xl mx-auto px-6 py-16">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-primary/30 pb-6 gap-4">

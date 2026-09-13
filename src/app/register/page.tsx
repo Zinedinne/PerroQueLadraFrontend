@@ -7,13 +7,27 @@ export default function RegisterForm() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false); // Estado para mostrar el mensaje de éxito
-  
+  const [isRegistered, setIsRegistered] = useState(false);
+
   const router = useRouter();
 
   const handleRegister = async (e: FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
+    setErrorMessage("");
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Las contraseñas no coinciden");
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+
     setLoading(true);
 
     const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
@@ -28,20 +42,18 @@ export default function RegisterForm() {
       const data = await res.json();
 
       if (res.ok) {
-        // En lugar de un alert o redirección inmediata, mostramos el mensaje de éxito
         setIsRegistered(true);
       } else {
-        alert("ERROR: " + (data.error?.message || "Hubo un problema"));
+        setErrorMessage(data.error?.message || "Hubo un problema al registrar la cuenta");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Error de conexión");
+      setErrorMessage("Error de conexión con el servidor");
     } finally {
       setLoading(false);
     }
   };
 
-  // PANTALLA DE ÉXITO (Se muestra después de registrarse)
   if (isRegistered) {
     return (
       <main className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 bg-background-dark">
@@ -50,18 +62,18 @@ export default function RegisterForm() {
             ¡REVISA TU MAIL!
           </h1>
           <p className="text-xs uppercase tracking-[0.2em] text-white mb-8 leading-relaxed">
-            Hemos enviado un código de activación a <span className="text-primary">{email}</span>. 
+            Hemos enviado un código de activación a <span className="text-primary">{email}</span>.
             Debes confirmarlo para entrar en la jauría.
           </p>
           <div className="space-y-4">
-            <Link 
-              href="/login" 
+            <Link
+              href="/login"
               className="block w-full bg-white text-background-dark font-black uppercase italic py-4 hover:bg-primary transition-colors"
             >
               Ir al Login
             </Link>
             <p className="text-[9px] uppercase tracking-widest text-white/30">
-              * Revisa tu bandeja de Ethereal para el enlace de prueba.
+              * Revisa tu bandeja de entrada para el enlace de prueba.
             </p>
           </div>
         </div>
@@ -69,7 +81,6 @@ export default function RegisterForm() {
     );
   }
 
-  // FORMULARIO DE REGISTRO NORMAL
   return (
     <main className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 bg-background-dark py-12">
       <div className="max-w-md w-full">
@@ -82,11 +93,20 @@ export default function RegisterForm() {
           </p>
         </div>
 
+        {errorMessage && (
+          <div className="mb-6 p-3 border border-red-500/40 bg-red-500/10 text-red-400 text-xs uppercase tracking-widest text-center">
+            {errorMessage}
+          </div>
+        )}
+
         <form onSubmit={handleRegister} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 ml-1">Nombre de Usuario</label>
+            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 ml-1">
+              Nombre de Usuario
+            </label>
             <input
-              type="text" required
+              type="text"
+              required
               className="w-full bg-white/5 border border-white/10 rounded-none p-4 text-white placeholder:text-white/10 focus:outline-none focus:border-primary uppercase text-xs tracking-widest"
               placeholder="EJ: ZINEDINE_V"
               value={username}
@@ -95,9 +115,12 @@ export default function RegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 ml-1">Correo Electrónico</label>
+            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 ml-1">
+              Correo Electrónico
+            </label>
             <input
-              type="email" required
+              type="email"
+              required
               className="w-full bg-white/5 border border-white/10 rounded-none p-4 text-white placeholder:text-white/10 focus:outline-none focus:border-primary uppercase text-xs tracking-widest"
               placeholder="TU@EMAIL.COM"
               value={email}
@@ -106,13 +129,34 @@ export default function RegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 ml-1">Contraseña</label>
+            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 ml-1">
+              Contraseña
+            </label>
             <input
-              type="password" required
+              type="password"
+              required
               className="w-full bg-white/5 border border-white/10 rounded-none p-4 text-white focus:outline-none focus:border-primary normal-case text-xs tracking-widest"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 ml-1">
+              Confirmar Contraseña
+            </label>
+            <input
+              type="password"
+              required
+              className={`w-full bg-white/5 border rounded-none p-4 text-white focus:outline-none normal-case text-xs tracking-widest ${
+                confirmPassword && password !== confirmPassword
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-white/10 focus:border-primary"
+              }`}
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
 
@@ -127,8 +171,19 @@ export default function RegisterForm() {
 
         <div className="mt-8 pt-8 border-t border-white/5 text-center">
           <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
-            ¿Ya eres parte? <Link href="/login" className="text-primary hover:text-white transition-colors ml-2 font-black">Inicia sesión</Link>
-          </p>
+            ¿Ya eres parte?{" "}
+            <Link
+              href="/login"
+              className="text-primary hover:text-white transition-colors ml-2 font-black"
+            >
+              Inicia sesión
+            </Link>
+           <br />
+	   <br />
+	   <br />
+	   <br /> 
+	 </p>
+	 
         </div>
       </div>
     </main>
